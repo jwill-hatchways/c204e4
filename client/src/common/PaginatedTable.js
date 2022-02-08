@@ -77,6 +77,7 @@ function TablePaginationActions(props) {
 export default function CustomPaginatedTable({
   paginatedData,
   count,
+  actionArea,
   page,
   rowsPerPage,
   headerColumns,
@@ -84,7 +85,7 @@ export default function CustomPaginatedTable({
   handleChangePage,
   handleChangeRowsPerPage,
 }) {
-  const { tableContainer, tableHead, flexRootEnd } = useTableStyles();
+  const { tableContainer, tableHead, flexRootEnd, flexRoot } = useTableStyles();
 
   const renderRows = () => {
     return rowData.map((row, index) => (
@@ -108,21 +109,26 @@ export default function CustomPaginatedTable({
 
   return (
     <React.Fragment>
-      <div className={flexRootEnd}>
-        <TablePagination
-          rowsPerPageOptions={NUM_ROWS_PER_PAGE_CHOICES}
-          colSpan={3}
-          count={count}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          SelectProps={{
-            inputProps: { "aria-label": "rows per page" },
-            native: true,
-          }}
-          onChangePage={handleChangePage}
-          onChangeRowsPerPage={handleChangeRowsPerPage}
-          ActionsComponent={TablePaginationActions}
-        />
+      <div className={flexRoot}>
+        <div className={flexRoot}>
+          {actionArea}
+        </div>
+        <div className={flexRootEnd}>
+          <TablePagination
+            rowsPerPageOptions={NUM_ROWS_PER_PAGE_CHOICES}
+            colSpan={3}
+            count={count}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            SelectProps={{
+              inputProps: { "aria-label": "rows per page" },
+              native: true,
+            }}
+            onChangePage={handleChangePage}
+            onChangeRowsPerPage={handleChangeRowsPerPage}
+            ActionsComponent={TablePaginationActions}
+          />
+        </div>
       </div>
       <Paper className={tableContainer} component={Paper}>
         <MaterialTable aria-label="custom pagination table">
