@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import moment from "moment";
 import axios from "axios";
-import { Grid, CircularProgress, Checkbox, Button, Typography, Box, Dialog, DialogTitle, DialogContent, DialogActions, Select, MenuItem, InputLabel, FormControl } from "@material-ui/core";
+import { Grid, CircularProgress, Checkbox, Button, Typography, Box, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Collapse, IconButton } from "@material-ui/core";
+import { Autocomplete, Alert } from '@material-ui/lab';
+import CloseIcon from '@material-ui/icons/Close';
 import PageTitle from "pages/mainlayout/PageTitle";
 import PaginatedTable from "common/PaginatedTable";
 
@@ -19,7 +21,8 @@ const Content = ({
   const [checkedProspects, setCheckedProspects] = useState({});
   const [pageChecked, setPageChecked] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
-  const [selectedCampaign, setSelectedCampaign] = useState(1);
+  const [selectedCampaign, setSelectedCampaign] = useState({ name: "", id: -1 });
+  const [alert, setAlert] = useState({ severity: "success", open: false, msg: "" });
 
   const handleItemCheck = event => {
     let newState = { ...checkedProspects };
@@ -88,26 +91,34 @@ const Content = ({
   };
 
   const handleModalClose = async (event) => {
-    if (event.target.innerText === "Add") {
-      try {
-        const resp = await axios.post(
-          `/api/campaigns/${selectedCampaign}/prospects`,
-          { prospect_ids: Object.keys(checkedProspects)}
-        );
-      } catch (error) {
-        console.log(error)
-      }
+    if (event.target.innerText !== "Add") {
+      setModalOpen(false);
+      return;
     }
+
+    let newAlert = {};
+
+    try {
+      await axios.post(
+        `/api/campaigns/${selectedCampaign.id}/prospects`,
+        { prospect_ids: Object.keys(checkedProspects) }
+      );
+      newAlert = { open: true, severity: "success", msg: `Prospects added to ${selectedCampaign.name}` };
+    } catch (error) {
+      console.log(error);
+      newAlert = { open: true, severity: "error", msg: `Failed to add prospects to ${selectedCampaign.name}` };
+    }
+    
+    setCheckedProspects({});
     setModalOpen(false);
+    setAlert(newAlert);
   };
 
-  const handleSelectChange = (event) => {
-    setSelectedCampaign(event.target.value);
+  const handleSelectChange = (_, newValue) => {
+    setSelectedCampaign(newValue);
   };
 
   const getSelectedCount = Object.keys(checkedProspects).length;
-  const campaignOptions = campaignData.map((campaign) => <MenuItem id={campaign.id} value={campaign.id}>{campaign.name}</MenuItem>);
-
 
   const rowData = paginatedData.map((row) => [
     <Checkbox color="primary" onChange={handleItemCheck} checked={checkedProspects[row.id] || false} id={row.id} />,
@@ -121,6 +132,25 @@ const Content = ({
   return (
     <>
       <PageTitle>Prospects</PageTitle>
+      <Collapse in={alert.open}>
+        <Alert
+          severity={alert.severity}
+          action={
+            <IconButton
+              aria-label="close"
+              color="inherit"
+              size="small"
+              onClick={() => {
+                setAlert({ ...alert, open: false });
+              }}
+            >
+              <CloseIcon fontSize="inherit" />
+            </IconButton>
+          }
+        >
+          {alert.msg}
+        </Alert>
+      </Collapse>
       {isDataLoading ? (
         <Grid container justifyContent="center">
           <CircularProgress />
@@ -148,18 +178,15 @@ const Content = ({
       <Dialog open={modalOpen} onClose={handleModalClose}>
         <DialogTitle>Select a Campaign to Add {getSelectedCount} Prospects</DialogTitle>
         <DialogContent>
-          <FormControl>
-          <InputLabel id="label-campaign">Campaign</InputLabel>
-            <Select
-              labelId="label-campaign"
-              id="select-campaign"
-              label="Campaign"
-              onChange={handleSelectChange}
-              value={selectedCampaign}
-            >
-              {campaignOptions}
-            </Select>
-          </FormControl>
+          <Autocomplete
+            id="select-campaign"
+            value={selectedCampaign}
+            options={campaignData}
+            getOptionLabel={(option) => option.name}
+            onChange={handleSelectChange}
+            style={{ width: 300 }}
+            renderInput={(params) => <TextField {...params} label="Campaign" variant="outlined" />}
+          />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleModalClose}>Cancel</Button>
