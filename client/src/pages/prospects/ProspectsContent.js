@@ -1,12 +1,20 @@
 import React, { useEffect, useState } from "react";
 import moment from "moment";
-import { Grid, CircularProgress, Checkbox, Button, Typography, Box, Collapse, IconButton } from "@material-ui/core";
-import Alert from '@material-ui/lab/Alert';
-import CloseIcon from '@material-ui/icons/Close';
+import Alert from "@material-ui/lab/Alert";
+import CloseIcon from "@material-ui/icons/Close";
 import PageTitle from "pages/mainlayout/PageTitle";
 import PaginatedTable from "common/PaginatedTable";
 import UploadProspects from "./UploadProspects";
-
+import {
+  Grid,
+  CircularProgress,
+  Checkbox,
+  Button,
+  Typography,
+  Box,
+  Collapse,
+  IconButton,
+} from "@material-ui/core";
 
 const Content = ({
   paginatedData,
@@ -16,14 +24,18 @@ const Content = ({
   rowsPerPage,
   handleChangePage,
   handleChangeRowsPerPage,
-  campaignData
+  campaignData,
 }) => {
   const [checkedProspects, setCheckedProspects] = useState({});
   const [pageChecked, setPageChecked] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
-  const [alert, setAlert] = useState({ severity: "success", open: false, msg: "" });
+  const [alert, setAlert] = useState({
+    severity: "success",
+    open: false,
+    msg: "",
+  });
 
-  const handleItemCheck = event => {
+  const handleItemCheck = (event) => {
     let newState = { ...checkedProspects };
 
     if (!event.target.checked) {
@@ -35,15 +47,15 @@ const Content = ({
     setCheckedProspects(newState);
   };
 
-  const handlePageCheck = event => {
+  const handlePageCheck = (event) => {
     let newState = { ...checkedProspects };
 
     if (event.target.checked) {
-      rowData.forEach(i => {
+      rowData.forEach((i) => {
         newState[i[0].props.id] = event.target.checked;
       });
     } else {
-      rowData.forEach(i => {
+      rowData.forEach((i) => {
         delete newState[i[0].props.id];
       });
     }
@@ -62,7 +74,7 @@ const Content = ({
       }
 
       return true;
-    }
+    };
     setPageChecked(isEntirePageChecked());
   }, [checkedProspects, paginatedData]);
 
@@ -80,21 +92,28 @@ const Content = ({
 
   const getSelectedCount = Object.keys(checkedProspects).length;
 
-  const addButton =
-    <Button variant="outlined"
-      color="primary"
-      onClick={handleModalOpen}>
+  const addButton = (
+    <Button variant="outlined" color="primary" onClick={handleModalOpen}>
       Add to Campaign
     </Button>
+  );
 
-  const countStatement =
+  const countStatement = (
     <>
-      <Typography>{getSelectedCount} of {count} selected</Typography>
+      <Typography>
+        {getSelectedCount} of {count} selected
+      </Typography>
       <Box sx={{ m: 2 }}></Box>
     </>
+  );
 
   const rowData = paginatedData.map((row) => [
-    <Checkbox color="primary" onChange={handleItemCheck} checked={checkedProspects[row.id] || false} id={row.id} />,
+    <Checkbox
+      color="primary"
+      onChange={handleItemCheck}
+      checked={checkedProspects[row.id] || false}
+      id={row.id}
+    />,
     row.email,
     row.first_name,
     row.last_name,
@@ -137,7 +156,11 @@ const Content = ({
           page={page}
           rowsPerPage={rowsPerPage}
           headerColumns={[
-            <Checkbox color="secondary" onChange={handlePageCheck} checked={pageChecked} />,
+            <Checkbox
+              color="secondary"
+              onChange={handlePageCheck}
+              checked={pageChecked}
+            />,
             "Email",
             "First Name",
             "Last Name",

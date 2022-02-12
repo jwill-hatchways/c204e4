@@ -28,7 +28,7 @@ const Prospects = () => {
 
       try {
         const resp = await axios.get(
-          `/api/prospects?page=${currentPage}&page_size=${rowsPerPage}`,
+          `/api/prospects?page=${currentPage}&page_size=${rowsPerPage}`
         );
         if (resp.data.error) throw new Error(resp.data.error);
         setProspectsData(resp.data.prospects);
@@ -41,9 +41,7 @@ const Prospects = () => {
     };
     const fetchCampaigns = async () => {
       try {
-        const resp = await axios.get(
-          `/api/campaigns`,
-        );
+        const resp = await axios.get(`/api/campaigns`);
         if (resp.data.error) throw new Error(resp.data.error);
         setCampaignData(resp.data.campaigns);
       } catch (error) {
