@@ -24,7 +24,6 @@ const Content = ({
   rowsPerPage,
   handleChangePage,
   handleChangeRowsPerPage,
-  campaignData,
 }) => {
   const [checkedProspects, setCheckedProspects] = useState({});
   const [pageChecked, setPageChecked] = useState(false);
@@ -176,7 +175,6 @@ const Content = ({
         open={modalOpen}
         onClose={handleModalClose}
         count={getSelectedCount}
-        campaignData={campaignData}
         checkedProspects={checkedProspects}
       />
     </>

@@ -11,17 +11,13 @@ import {
 } from "@material-ui/core";
 import { useProspectStyles } from "../../styles/prospects";
 
-const UploadProspects = ({
-  open,
-  onClose,
-  count,
-  campaignData,
-  checkedProspects,
-}) => {
+const UploadProspects = ({ open, onClose, count, checkedProspects }) => {
   const [selectedCampaign, setSelectedCampaign] = useState({
     name: "",
     id: -1,
   });
+  const [searchString, setSearchString] = useState("");
+  const [campaignData, setcampaignData] = useState([]);
   const { formFieldWidth } = useProspectStyles();
 
   const upload = async () => {
@@ -48,6 +44,18 @@ const UploadProspects = ({
     setSelectedCampaign(newValue);
   };
 
+  const handleInputChange = async (_, newValue) => {
+    setSearchString(newValue);
+    if (newValue === "") return;
+
+    try {
+      const res = await axios.get(`/api/campaigns/search?query=${newValue}`);
+      setcampaignData(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <Dialog open={open} onClose={onClose}>
       <DialogTitle>Select a Campaign to Add {count} Prospects</DialogTitle>
@@ -58,7 +66,9 @@ const UploadProspects = ({
           options={campaignData}
           getOptionLabel={(option) => option.name}
           onChange={handleSelectChange}
+          onInputChange={handleInputChange}
           className={formFieldWidth}
+          inputValue={searchString}
           renderInput={(params) => (
             <TextField {...params} label="Campaign" variant="outlined" />
           )}
