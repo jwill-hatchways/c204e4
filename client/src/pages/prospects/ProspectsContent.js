@@ -53,11 +53,11 @@ const Content = ({
 
   useEffect(() => {
     const isEntirePageChecked = () => {
-      let keys = Object.keys(checkedProspects);
+      const keys = Object.keys(checkedProspects);
       if (keys.length === 0) return false;
 
-      for (let i in paginatedData) {
-        let val = paginatedData[i].id.toString();
+      for (const i in paginatedData) {
+        const val = paginatedData[i].id.toString();
         if (keys.indexOf(val) === -1 || !checkedProspects[val]) return false;
       }
 
