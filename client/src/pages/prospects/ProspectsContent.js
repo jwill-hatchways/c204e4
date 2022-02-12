@@ -36,7 +36,7 @@ const Content = ({
   });
 
   const handleItemCheck = (event) => {
-    let newState = { ...checkedProspects };
+    const newState = { ...checkedProspects };
 
     if (!event.target.checked) {
       delete newState[event.target.id];
@@ -48,7 +48,7 @@ const Content = ({
   };
 
   const handlePageCheck = (event) => {
-    let newState = { ...checkedProspects };
+    const newState = { ...checkedProspects };
 
     if (event.target.checked) {
       rowData.forEach((i) => {

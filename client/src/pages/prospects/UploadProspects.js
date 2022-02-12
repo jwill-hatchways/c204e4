@@ -23,24 +23,20 @@ const UploadProspects = ({
   });
 
   const upload = async () => {
-    let newAlert = {};
+    const newAlert = {};
 
     try {
       await axios.post(`/api/campaigns/${selectedCampaign.id}/prospects`, {
         prospect_ids: Object.keys(checkedProspects),
       });
-      newAlert = {
-        open: true,
-        severity: "success",
-        msg: `Prospects added to ${selectedCampaign.name}`,
-      };
+      newAlert.open = true;
+      newAlert.severity = "success";
+      newAlert.msg = `Prospects added to ${selectedCampaign.name}`;
     } catch (error) {
       console.log(error);
-      newAlert = {
-        open: true,
-        severity: "error",
-        msg: `Failed to add prospects to ${selectedCampaign.name}`,
-      };
+      newAlert.open = true;
+      newAlert.severity = "error";
+      newAlert.msg = `Failed to add prospects to ${selectedCampaign.name}`;
     }
 
     onClose(newAlert);
