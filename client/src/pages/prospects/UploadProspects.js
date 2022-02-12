@@ -9,6 +9,7 @@ import {
   DialogActions,
   TextField,
 } from "@material-ui/core";
+import { useProspectStyles } from "../../styles/prospects";
 
 const UploadProspects = ({
   open,
@@ -21,6 +22,7 @@ const UploadProspects = ({
     name: "",
     id: -1,
   });
+  const { formFieldWidth } = useProspectStyles();
 
   const upload = async () => {
     const newAlert = {};
@@ -56,7 +58,7 @@ const UploadProspects = ({
           options={campaignData}
           getOptionLabel={(option) => option.name}
           onChange={handleSelectChange}
-          style={{ width: 300 }}
+          className={formFieldWidth}
           renderInput={(params) => (
             <TextField {...params} label="Campaign" variant="outlined" />
           )}

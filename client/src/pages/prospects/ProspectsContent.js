@@ -11,10 +11,10 @@ import {
   Checkbox,
   Button,
   Typography,
-  Box,
   Collapse,
   IconButton,
 } from "@material-ui/core";
+import { useProspectStyles } from "../../styles/prospects";
 
 const Content = ({
   paginatedData,
@@ -34,6 +34,7 @@ const Content = ({
     open: false,
     msg: "",
   });
+  const { marginEnd } = useProspectStyles();
 
   const handleItemCheck = (event) => {
     const newState = { ...checkedProspects };
@@ -100,10 +101,9 @@ const Content = ({
 
   const countStatement = (
     <>
-      <Typography>
+      <Typography className={marginEnd}>
         {getSelectedCount} of {count} selected
       </Typography>
-      <Box sx={{ m: 2 }}></Box>
     </>
   );
 
