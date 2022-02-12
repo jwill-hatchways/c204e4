@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import moment from "moment";
-import axios from "axios";
-import { Grid, CircularProgress, Checkbox, Button, Typography, Box, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Collapse, IconButton } from "@material-ui/core";
-import { Autocomplete, Alert } from '@material-ui/lab';
+import { Grid, CircularProgress, Checkbox, Button, Typography, Box, Collapse, IconButton } from "@material-ui/core";
+import Alert from '@material-ui/lab/Alert';
 import CloseIcon from '@material-ui/icons/Close';
 import PageTitle from "pages/mainlayout/PageTitle";
 import PaginatedTable from "common/PaginatedTable";
+import UploadProspects from "./UploadProspects";
 
 
 const Content = ({
@@ -21,7 +21,6 @@ const Content = ({
   const [checkedProspects, setCheckedProspects] = useState({});
   const [pageChecked, setPageChecked] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
-  const [selectedCampaign, setSelectedCampaign] = useState({ name: "", id: -1 });
   const [alert, setAlert] = useState({ severity: "success", open: false, msg: "" });
 
   const handleItemCheck = event => {
@@ -67,58 +66,32 @@ const Content = ({
     setPageChecked(isEntirePageChecked());
   }, [checkedProspects, paginatedData]);
 
-  const countStatement = () => {
-    return (
-      <>
-        <Typography>{getSelectedCount} of {count} selected</Typography>
-        <Box sx={{ m: 2 }}></Box>
-      </>
-    );
-  };
-
-  const addButton = () => {
-    return (
-      <Button variant="outlined"
-        color="primary"
-        onClick={handleModalOpen}>
-        Add to Campaign
-      </Button>
-    );
-  };
-
   const handleModalOpen = () => {
     if (getSelectedCount > 0) setModalOpen(true);
   };
 
-  const handleModalClose = async (event) => {
-    if (event.target.innerText !== "Add") {
-      setModalOpen(false);
-      return;
-    }
+  const handleModalClose = (alertStatus) => {
+    if (!alertStatus) setModalOpen(false);
 
-    let newAlert = {};
-
-    try {
-      await axios.post(
-        `/api/campaigns/${selectedCampaign.id}/prospects`,
-        { prospect_ids: Object.keys(checkedProspects) }
-      );
-      newAlert = { open: true, severity: "success", msg: `Prospects added to ${selectedCampaign.name}` };
-    } catch (error) {
-      console.log(error);
-      newAlert = { open: true, severity: "error", msg: `Failed to add prospects to ${selectedCampaign.name}` };
-    }
-    
-    setCheckedProspects({});
+    if (alertStatus.severity === "success") setCheckedProspects({});
+    setAlert(alertStatus);
     setModalOpen(false);
-    setAlert(newAlert);
-  };
-
-  const handleSelectChange = (_, newValue) => {
-    setSelectedCampaign(newValue);
   };
 
   const getSelectedCount = Object.keys(checkedProspects).length;
+
+  const addButton =
+    <Button variant="outlined"
+      color="primary"
+      onClick={handleModalOpen}>
+      Add to Campaign
+    </Button>
+
+  const countStatement =
+    <>
+      <Typography>{getSelectedCount} of {count} selected</Typography>
+      <Box sx={{ m: 2 }}></Box>
+    </>
 
   const rowData = paginatedData.map((row) => [
     <Checkbox color="primary" onChange={handleItemCheck} checked={checkedProspects[row.id] || false} id={row.id} />,
@@ -172,27 +145,17 @@ const Content = ({
             "Updated",
           ]}
           rowData={rowData}
-          actionArea={[countStatement(), addButton()]}
+          actionArea={[countStatement, addButton]}
         />
       )}
-      <Dialog open={modalOpen} onClose={handleModalClose}>
-        <DialogTitle>Select a Campaign to Add {getSelectedCount} Prospects</DialogTitle>
-        <DialogContent>
-          <Autocomplete
-            id="select-campaign"
-            value={selectedCampaign}
-            options={campaignData}
-            getOptionLabel={(option) => option.name}
-            onChange={handleSelectChange}
-            style={{ width: 300 }}
-            renderInput={(params) => <TextField {...params} label="Campaign" variant="outlined" />}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleModalClose}>Cancel</Button>
-          <Button onClick={handleModalClose}>Add</Button>
-        </DialogActions>
-      </Dialog>
+
+      <UploadProspects
+        open={modalOpen}
+        onClose={handleModalClose}
+        count={getSelectedCount}
+        campaignData={campaignData}
+        checkedProspects={checkedProspects}
+      />
     </>
   );
 };
