@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_11_22_145653) do
+ActiveRecord::Schema.define(version: 2022_02_14_194745) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -28,6 +28,22 @@ ActiveRecord::Schema.define(version: 2021_11_22_145653) do
     t.bigint "prospect_id", null: false
     t.index ["campaign_id", "prospect_id"], name: "index_campaigns_prospects_on_campaign_id_and_prospect_id"
     t.index ["prospect_id", "campaign_id"], name: "index_campaigns_prospects_on_prospect_id_and_campaign_id"
+  end
+
+  create_table "import_jobs", force: :cascade do |t|
+    t.integer "total"
+    t.integer "done"
+    t.string "filename"
+    t.integer "email_index"
+    t.integer "first_name_index"
+    t.integer "last_name_index"
+    t.boolean "force_overwrite"
+    t.boolean "has_headers"
+    t.string "job_status"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.bigint "user_id", null: false
+    t.index ["user_id"], name: "index_import_jobs_on_user_id"
   end
 
   create_table "prospects", force: :cascade do |t|
@@ -49,5 +65,6 @@ ActiveRecord::Schema.define(version: 2021_11_22_145653) do
   end
 
   add_foreign_key "campaigns", "users"
+  add_foreign_key "import_jobs", "users"
   add_foreign_key "prospects", "users"
 end
