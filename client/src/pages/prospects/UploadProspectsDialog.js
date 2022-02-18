@@ -11,7 +11,7 @@ import {
 } from "@material-ui/core";
 import { useProspectStyles } from "../../styles/prospects";
 
-const UploadProspects = ({ open, onClose, count, checkedProspects }) => {
+const UploadProspectsDialog = ({ open, onClose, count, checkedProspects }) => {
   const [selectedCampaign, setSelectedCampaign] = useState({
     name: "",
     id: -1,
@@ -31,7 +31,7 @@ const UploadProspects = ({ open, onClose, count, checkedProspects }) => {
       newAlert.severity = "success";
       newAlert.msg = `Prospects added to ${selectedCampaign.name}`;
     } catch (error) {
-      console.log(error);
+      console.error(error);
       newAlert.open = true;
       newAlert.severity = "error";
       newAlert.msg = `Failed to add prospects to ${selectedCampaign.name}`;
@@ -52,7 +52,7 @@ const UploadProspects = ({ open, onClose, count, checkedProspects }) => {
       const res = await axios.get(`/api/campaigns/search?query=${newValue}`);
       setcampaignData(res.data);
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 
@@ -82,4 +82,4 @@ const UploadProspects = ({ open, onClose, count, checkedProspects }) => {
   );
 };
 
-export default UploadProspects;
+export default UploadProspectsDialog;

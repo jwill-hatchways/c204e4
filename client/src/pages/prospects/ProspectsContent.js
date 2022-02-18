@@ -4,7 +4,7 @@ import Alert from "@material-ui/lab/Alert";
 import CloseIcon from "@material-ui/icons/Close";
 import PageTitle from "pages/mainlayout/PageTitle";
 import PaginatedTable from "common/PaginatedTable";
-import UploadProspects from "./UploadProspects";
+import UploadProspectsDialog from "./UploadProspectsDialog";
 import {
   Grid,
   CircularProgress,
@@ -51,12 +51,12 @@ const Content = ({
     const newState = { ...checkedProspects };
 
     if (event.target.checked) {
-      rowData.forEach((i) => {
-        newState[i[0].props.id] = event.target.checked;
+      paginatedData.forEach((row) => {
+        newState[row.id] = event.target.checked;
       });
     } else {
-      rowData.forEach((i) => {
-        delete newState[i[0].props.id];
+      paginatedData.forEach((row) => {
+        delete newState[row.id];
       });
     }
 
@@ -92,17 +92,14 @@ const Content = ({
 
   const getSelectedCount = Object.keys(checkedProspects).length;
 
-  const addButton = (
-    <Button variant="outlined" color="primary" onClick={handleModalOpen}>
-      Add to Campaign
-    </Button>
-  );
-
-  const countStatement = (
+  const actionArea = (
     <>
       <Typography className={marginEnd}>
         {getSelectedCount} of {count} selected
       </Typography>
+      <Button variant="outlined" color="primary" onClick={handleModalOpen}>
+        Add to Campaign
+      </Button>
     </>
   );
 
@@ -167,11 +164,11 @@ const Content = ({
             "Updated",
           ]}
           rowData={rowData}
-          actionArea={[countStatement, addButton]}
+          actionArea={actionArea}
         />
       )}
 
-      <UploadProspects
+      <UploadProspectsDialog
         open={modalOpen}
         onClose={handleModalClose}
         count={getSelectedCount}
