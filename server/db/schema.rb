@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_11_22_145653) do
+ActiveRecord::Schema.define(version: 2022_02_16_203311) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -30,6 +30,22 @@ ActiveRecord::Schema.define(version: 2021_11_22_145653) do
     t.index ["prospect_id", "campaign_id"], name: "index_campaigns_prospects_on_prospect_id_and_campaign_id"
   end
 
+  create_table "import_jobs", force: :cascade do |t|
+    t.integer "total"
+    t.integer "done"
+    t.string "filename"
+    t.integer "email_index"
+    t.integer "first_name_index"
+    t.integer "last_name_index"
+    t.boolean "force_overwrite"
+    t.boolean "has_headers"
+    t.string "job_status"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.bigint "user_id", null: false
+    t.index ["user_id"], name: "index_import_jobs_on_user_id"
+  end
+
   create_table "prospects", force: :cascade do |t|
     t.string "email"
     t.text "first_name"
@@ -37,6 +53,7 @@ ActiveRecord::Schema.define(version: 2021_11_22_145653) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.bigint "user_id", null: false
+    t.index ["user_id", "email"], name: "index_prospects_on_user_id_and_email", unique: true
     t.index ["user_id"], name: "index_prospects_on_user_id"
   end
 
@@ -49,5 +66,6 @@ ActiveRecord::Schema.define(version: 2021_11_22_145653) do
   end
 
   add_foreign_key "campaigns", "users"
+  add_foreign_key "import_jobs", "users"
   add_foreign_key "prospects", "users"
 end
